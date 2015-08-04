@@ -1,0 +1,132 @@
+# /etc/cron.d/new2-europe1
+# vim: filetype=crontab
+
+
+# This must be set to the directory where eZ Publish is installed.
+
+# Location of the log directory
+
+# Location of the PHP Command Line Interface binary.
+
+# Export tweetwallPro
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php export_tweetwall_pro 2>&1 | logify >>$LOGDIR/europe1_export_tweetwall_pro.log 2>&1
+
+# IndexContent & images
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin index_content --site=europe1_admin >/dev/null 2>&1
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab_admin index_content --site=europe1_lelab_admin >/dev/null 2>&1
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_images index_images >/dev/null 2>&1
+
+# Programmated publication
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin unstack_publication_pending --action=create 2>&1 | logify >>$LOGDIR/europe1_unstack_publish_create.log 2>&1
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin unstack_publication_pending --action=delete 2>&1 | logify >>$LOGDIR/europe1_unstack_publish_delete.log 2>&1
+
+# Chamane
+25 6 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:import:chamane --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_import_chamane.log 2>&1
+28 6 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:import:playlist-live --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_playlist_live.log 2>&1
+0 10 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:import:musical-references --siteaccess=europe1 -i 1day --env=prod 2>&1 | logify >>$LOGDIR/europe1_musical_references.log 2>&1
+30 4 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:radioline --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_radioline.log 2>&1
+
+# Believe + Dailymotion
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:believe-video-upload --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_believe_upload.log 2>&1
+*/2 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin videoUpload --service=Dailymotion 2>&1 | logify >>$LOGDIR/europe1_dailymotion_upload.log 2>&1
+
+# Google editor choice
+*/15 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console europe1:flux:google-editor-choice --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_google_choice.log 2>&1
+
+# Twitter
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:twitter-export --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_twitter_export.log 2>&1
+
+# Factiva & Cedrom
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:migration-export --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_export_factiva.log 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:migration-export --siteaccess=europe1 --type=cedrom --env=prod 2>&1 | logify >>$LOGDIR/europe1_export_cedrom.log 2>&1
+
+# eZFlow
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php ezflow 2>&1 | logify >>$LOGDIR/ezflow.log 2>&1
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php ezflow-cleanup 2>&1 | logify >>$LOGDIR/ezflow-cleanup.log 2>&1
+
+# Sitemaps (general & images)
+0 23 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab generate_sitemap_general 2>&1 | logify >>$LOGDIR/lelab-generate_sitemap_general.log 2>&1
+0 23 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:images-feed --env=prod 2>&1 | logify >>$LOGDIR/lelab-generate_sitemap_images.log 2>&1
+
+# Sitemap (news)
+*/10 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab generate_sitemap_news 2>&1 | logify >>$LOGDIR/lelab-generate_sitemap_news.log 2>&1
+
+# Génération ez
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:tagsHeaderFooter --siteaccess=europe1_lelab --env=prod 2>&1 | logify >>$LOGDIR/lelab-generate_html_part.log 2>&1
+#Replace by above*/10 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab generate_html_part 2>&1 | logify >>$LOGDIR/lelab-generate_html_part.log 2>&1
+
+# Génération symfony
+0 9,16 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:zone-file --env=prod --siteaccess=europe1_lelab left 2>&1 | logify >>$LOGDIR/europe1_lelab-left.log 2>&1
+1 9,16 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:zone-file --env=prod --siteaccess=europe1_lelab left_article 2>&1 | logify >>$LOGDIR/europe1_lelab-left_article.log 2>&1
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:xml-articles --env=prod -m 50 2>&1 | logify >>$LOGDIR/europe1_lelab-xml-articles.log 2>&1
+2 9,16 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:tops-ten --env=prod --siteaccess=europe1_lelab 2>&1 | logify >>$LOGDIR/europe1_lelab-tops.log 2>&1
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:feed-list --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab-feed-list.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:eztag-items-table --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab-eztags-items-table.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:laselectedtweets --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab-laselectedtweets.log 2>&1
+43 5-22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console social:update:raisedItems --siteaccess=europe1_lelab --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab-raisedItems.log 2>&1
+3 9,16 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console social:update:raisedItems --siteaccess=europe1_lelab --env=prod pending 2>&1 | logify >>$LOGDIR/europe1_lelab-raisedItems_pending.log 2>&1
+52 5-22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console social:update:raisedItems --siteaccess=europe1 --interval=3days --env=prod 2>&1 | logify >>$LOGDIR/europe1-raisedItems.log 2>&1
+
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:headersListening --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_headers_listening.log 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:highlights:header --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_highlights_header.log 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:highlights:footer --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_highlights_footer.log 2>&1
+5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:most-commented --siteaccess=europe1 --dateInterval=2days --env=prod 2>&1 | logify >>$LOGDIR/europe1_most_commented.log 2>&1
+10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:most-read --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_most_read.log 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:rightcol --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_rightcol.log 2>&1
+*/2 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:timeline --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_timeline.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:blocks --siteaccess=europe1 top --env=prod 2>&1 | logify >>$LOGDIR/europe1_blocks_top.log 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:blocks --siteaccess=europe1 bottom --env=prod 2>&1 | logify >>$LOGDIR/europe1_blocks_bootom.log 2>&1
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:feed-list --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_feed_list.log 2>&1
+*/30 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:most-shared --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_most_shared.log 2>&1
+15 23 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console europe1:generate:top-archive --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_top_archives.log 2>&1
+*/30 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:best-page-hub-tag --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_best_page_hub.log 2>&1
+20 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:top-page-hub --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_top_page_hub.log 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:direct-last-content --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_direct_last_content.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:send:contactform --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_send_contactform.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:newsSitemap --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_news.log 2>&1
+8 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:sitemapPictures --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_pictures.log 2>&1
+9 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:classicSitemap --siteaccess=europe1 --type=speaker --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_speaker.log 2>&1
+11 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:classicSitemap --siteaccess=europe1 --type=page_hub --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_pagehub.log 2>&1
+12 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:sitemapVideos --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_video.log 2>&1
+16 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:indexSitemap --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_index.log 2>&1
+17 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:articleByCategorySitemap --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_article_category.log 2>&1
+37 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:sitemapMediaCenter --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_sitemap_mediacenter.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:home-generation --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_home_generation.log 2>&1
+36 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:europe1:active-broadcast --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_get_active_broadcast.log 2>&1
+#* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:googleNewsRSS --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_gnews.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:send:soundArchivesUser --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_send_sound_archives.log 2>&1
+35 22 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin generate_dashboard_analytics --type=production 2>&1 | logify >>$LOGDIR/europe1-generate_dashboard_analytics.log 2>&1
+0 23 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin remove_media_files 2>&1
+
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console club:home-generation --siteaccess=europe1_club --env=prod 2>&1 | logify >>$LOGDIR/europe1_club_home_generation.log 2>&1
+* * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:home-generation --siteaccess=europe1_lelab --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab_home_generation.log 2>&1
+37 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:rab-de-lab --siteaccess=europe1_lelab --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab_rab_de_lab.log 2>&1
+38 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:more-home --siteaccess=europe1_lelab --env=prod 2>&1 | logify >>$LOGDIR/europe1_lelab_more_home.log 2>&1
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:news-feed --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_news_feed.log 2>&1
+39 22 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin generate_dashboard 2>&1 | logify >>$LOGDIR/europe1_dashboard.log 2>&1
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab_admin clear_memcache_pending --site=europe1_lelab_admin 2>&1 | logify >>$LOGDIR/europe1_lelab_clear_memcache.log 2>&1
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin clear_memcache_pending --site=europe1_admin 2>&1 | logify >>$LOGDIR/europe1_clear_memcache.log 2>&1
+52 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:highlightsList --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_highlights_list.log 2>&1
+
+38 22 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab_admin generate_dashboard_analytics --type=production 2>&1 | logify >>$LOGDIR/europe1_lelab-generate_dashboard_analytics.log 2>&1
+43 22 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_lelab_admin generate_dashboard 2>&1 | logify >>$LOGDIR/europe1_lelab_dashboard.log 2>&1
+0 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console meteo:generate:meteo --siteaccess=europe1_meteo --env=prod 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console europe1:flux:nrn --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1-xml-nrn.log 2>&1
+13 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:footer-encrypt --siteaccess=europe1 --env=prod 2>&1
+17 22 * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:header-encrypt --siteaccess=europe1 --env=prod 2>&1
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console europe1:flux:innovation --siteaccess=europe1 --env=prod 2>&1
+
+0/10 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin generate_podcasts 2>&1 | logify >>$LOGDIR/europe1-generate_podcasts.log 2>&1
+0 1 * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php check_podcasts_adserving 2>&1 | logify >>$LOGDIR/europe1-check_podcasts_adserving.log 2>&1
+0 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS -d 'memory_limit=256M' runcronjobs.php generate_podcasts_adserving 2>&1 | logify >>$LOGDIR/europe1-generate_podcasts_adserving.log 2>&1
+*/10 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php unstack_podcasts_tracking_pending 2>&1 | logify >>$LOGDIR/europe1-unstack_podcasts_tracking_pending.log 2>&1
+
+* * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1_admin videoUpload --service=Arkena 2>&1
+*/2 * * * *    www-data    cd $DOCROOT/ezpublish_legacy && umask 002 && $PHP $PHPARGS runcronjobs.php -s europe1 generate_static_flux_ipad 2>&1 | logify >>$LOGDIR/europe1-generate_static_flux_ipad.log 2>&1
+
+*/5 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console europe1:export:mediabong --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1-export-mediabong.log 2>&1
+
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console lelab:generate:tagsHeaderFooter --encrypted --siteaccess=europe1_lelab --env=prod 2>&1 | logify >>$LOGDIR/lelab-generate_html_part_encrypted.log 2>&1
+*/10 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:blocks --siteaccess=europe1 header --env=prod 2>&1 | logify >>$LOGDIR/europe1_sponso_tag.log 2>&1
+27,57 * * * *    www-data    cd $DOCROOT && umask 002 && $PHP $PHPARGS ezpublish/console front:generate:frontpage-submenus --siteaccess=europe1 --env=prod 2>&1 | logify >>$LOGDIR/europe1_frontpage_submenu.log 2>&1
+

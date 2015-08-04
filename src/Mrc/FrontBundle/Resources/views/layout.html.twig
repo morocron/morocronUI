@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Morocron</title>
+
+    {% block stylesheets %}
+        {% stylesheets
+        'bundles/mrcfront/css/bootstrap.min.css'
+        'bundles/mrcfront/css/metisMenu.min.css'
+        'bundles/mrcfront/css/timeline.css'
+        'bundles/mrcfront/css/sb-admin-2.css'
+        'bundles/mrcfront/css/morris.css'
+        'bundles/mrcfront/css/font-awesome.min.css'
+        'bundles/mrcfront/css/main.css'
+        filter='cssrewrite'
+        output='css/compiled/mrc_main.css' %}
+        <link rel="stylesheet" href="{{ asset(asset_url) }}" type="text/css" media="screen"/>
+        {% endstylesheets %}
+    {% endblock stylesheets %}
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    {% include 'MrcFrontBundle:Nav:main.html.twig' %}
+
+    <div id="page-wrapper">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<{% javascripts
+    'bundles/mrcfront/js/jquery.min.js'
+    'bundles/mrcfront/js/bootstrap.min.js'
+    'bundles/mrcfront/js/metisMenu.min.js'
+    'bundles/mrcfront/js/raphael-min.js'
+    'bundles/mrcfront/js/morris.min.js'
+    'bundles/mrcfront/js/sb-admin-2.js'
+    output='js/compiled/mrc_main.js' %}
+    <script src="{{ asset(asset_url) }}"></script>
+{% endjavascripts %}
+
+{% block actualGraph %}
+{% endblock actualGraph %}
+
+</body>
+
+</html>

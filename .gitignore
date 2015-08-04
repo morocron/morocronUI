@@ -35,3 +35,10 @@
 
 # Composer PHAR
 /composer.phar
+
+.idea/
+
+/web/bundles/
+/web/images
+/web/css
+/web/js

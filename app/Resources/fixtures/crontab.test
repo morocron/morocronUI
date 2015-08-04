@@ -1,0 +1,51 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+
+#0 0,12 1 */2 * /sbin/ping -c 192.168.0.1; ls -la >>/var/log/cronrun
+
+*/5 * * * *  tar -zcf /var/backups/jjjjj.tgz /jjjjjj
+0 5 * * *    tar -zcf /var/backups/home.tgz /home/
+*/10 * * * * tar -zcf /var/backups/log.tgz /home/log
+*/3 * * * *  tar -zcf /var/backups/nnnnnn.tgz /nnnnnn
+*/5 * * * *  tar -zcf /var/backups/doc.tgz /home/Documents
+* * * * *    tar -zcf /var/backups/aaaaa.tgz /aaaa/
+*/5 * * * *  tar -zcf /var/backups/iiiii.tgz /iiiiii
+*/3 * * * *  tar -zcf /var/backups/mmmmmmm.tgz /mmmmm
+*/2 * * * *  tar -zcf /var/backups/ggggggg.tgz /ggggg
+* * * * *    tar -zcf /var/backups/bbbb.tgz /bbbb/
+5 * * * *    tar -zcf /var/backups/var.tgz /var/
+*/3 * * * *  tar -zcf /var/backups/lllll.tgz /llllll
+*/3 * * * *  tar -zcf /var/backups/qqqqq.tgz /qqqqqq
+*/3 * * * *  tar -zcf /var/backups/rrrrrr.tgz /rrrrrr
+*/3 * * * *  tar -zcf /var/backups/ssssss.tgz /sssss
+*/5 * * * *  tar -zcf /var/backups/son.tgz /home/Son
+*/3 * * * *  tar -zcf /var/backups/ooooo.tgz /ooooo
+*/2 * * * *  tar -zcf /var/backups/projects.tgz /home/Projects
+*/5 * * * *  tar -zcf /var/backups/hhhhh.tgz /hhhhh
+*/10 * * * * tar -zcf /var/backups/video.tgz /home/Videos
+* * * * *    tar -zcf /var/backups/ccccc.tgz /cccccc/
+*/2 * * * *  tar -zcf /var/backups/ffffff.tgz /ffffffff
+*/3 * * * *  tar -zcf /var/backups/ppppp.tgz /pppppp
+*/5 * * * *  tar -zcf /var/backups/kkkkkk.tgz /kkkkkk
+
+0 4 15-21 * 1 /command

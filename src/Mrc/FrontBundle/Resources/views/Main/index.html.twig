@@ -1,0 +1,81 @@
+{% extends 'MrcFrontBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Dashboard</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+
+    {#{% include 'MrcFrontBundle:Main:highlight.html.twig' %}#}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading blue">
+                    <i class="fa fa-bell fa-fw"></i> Actual Cron list
+                </div>
+                <div class="panel-body limited-400">
+                    <div class="list-group">
+                        {% for cron in data %}
+                            <a href="#" class="list-group-item" title="{{ cron.command }}">
+                                <i class="fa fa-tasks fa-fw"></i> {{ cron.definition.expression }}
+                                <span>{{ cron.command|truncate(50) }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading red">
+                    <i class="fa fa-bell fa-fw"></i> Optimized Cron list
+                </div>
+                <div class="panel-body limited-400">
+                    <div class="list-group">
+                        {% for cron in optimizedData %}
+                            <a href="#" class="list-group-item" title="{{ cron.command }}">
+                                <i class="fa fa-tasks fa-fw"></i> {{ cron.definition.expression }}
+                                <span>{{ cron.command|truncate(50) }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bar-chart-o fa-fw"></i> Cron Time Distribution
+                </div>
+                <div class="panel-body">
+                    <div id="morris-area-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block actualGraph %}
+    <script>
+        $(function() {
+            Morris.Line({
+                element: 'morris-area-chart',
+                data: {{ distribution|raw }},
+                xkey: 'time',
+                ykeys: ['actualHits', 'optimizedHits'],
+                labels: ['actualHits', 'optimizedHits'],
+                lineColors: ['#337ab7', '#AA3333'],
+                pointSize: 1,
+                hideHover: 'auto',
+                resize: true
+            });
+        });
+    </script>
+{% endblock actualGraph %}

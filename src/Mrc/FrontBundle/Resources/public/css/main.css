@@ -1,0 +1,14 @@
+.limited-400 {
+    max-height: 350px;
+    overflow: auto;
+}
+.page-header {
+    margin: 15px 0 20px;
+}
+
+.panel-default>.panel-heading.blue {
+    color: #337ab7;
+}
+.panel-default>.panel-heading.red {
+    color: #AA3333;
+}
